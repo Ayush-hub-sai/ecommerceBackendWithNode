@@ -1,9 +1,35 @@
 const Item = require('../models/Item');
 
 exports.createItem = async (req, res) => {
-    const item = new Item(req.body);
-    await item.save();
-    res.status(201).send(item);
+    try {
+        const item = new Item(req.body);
+        await item.save();
+        res.status(201).send({
+            status: true,
+            data: item,
+            message: "Item Created Successfully."
+        });
+    } catch (error) {
+        if (error.name === "ValidationError") {
+            // Extract validation error details
+            const errors = Object.keys(error.errors).map(field => ({
+                field,
+                message: error.errors[field].message
+            }));
+
+            return res.status(400).send({
+                status: false,
+                message: "Validation error occurred.",
+                errors
+            });
+        }
+
+        res.status(500).send({
+            status: false,
+            message: "An error occurred while saving the item.",
+            error: error.message
+        });
+    }
 };
 
 exports.getItems = async (req, res) => {

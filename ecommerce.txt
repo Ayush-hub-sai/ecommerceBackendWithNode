@@ -1,0 +1,4 @@
+ 1- npm init -y
+ 2- Install the required packages:
+        npm install express mongoose jsonwebtoken bcryptjs cors body-parser
+3-
