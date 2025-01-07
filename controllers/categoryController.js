@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const handleError = require('../utils/errorHandler');  // Import the global error handler
 
 exports.createCategory = async (req, res) => {
     try {
@@ -10,41 +11,58 @@ exports.createCategory = async (req, res) => {
             message: "Category Created Successfully."
         });
     } catch (error) {
-        if (error.name === "ValidationError") {
-            // Extract validation error details
-            const errors = Object.keys(error.errors).map(field => ({
-                field,
-                message: error.errors[field].message
-            }));
-
-            return res.status(400).send({
-                status: false,
-                message: "Validation error occurred.",
-                errors
-            });
-        }
-
-        res.status(500).send({
-            status: false,
-            message: "An error occurred while saving the item data.",
-            error: error.message
-        });
+        handleError(res, error, "Error occurred while creating the category.");  // Use global error handler
     }
 };
 
 exports.getCategories = async (req, res) => {
-    const categories = await Category.find();
-    res.json(categories);
+    try {
+        const categories = await Category.find();
+        res.status(200).send({
+            status: true,
+            data: categories,
+            message: "Categories retrieved successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while retrieving categories.");  // Use global error handler
+    }
 };
 
 exports.updateCategory = async (req, res) => {
     const { id } = req.params;
-    const updatedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
-    res.json(updatedCategory);
+    try {
+        const updatedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+        if (!updatedCategory) {
+            return res.status(404).send({
+                status: false,
+                message: "Category not found."
+            });
+        }
+        res.status(200).send({
+            status: true,
+            data: updatedCategory,
+            message: "Category updated successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while updating the category.");  // Use global error handler
+    }
 };
 
 exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
-    await Category.findByIdAndDelete(id);
-    res.status(204).send();
+    try {
+        const deletedCategory = await Category.findByIdAndDelete(id);
+        if (!deletedCategory) {
+            return res.status(404).send({
+                status: false,
+                message: "Category not found."
+            });
+        }
+        res.status(200).send({
+            status: true,
+            message: "Category deleted successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while deleting the category.");  // Use global error handler
+    }
 };

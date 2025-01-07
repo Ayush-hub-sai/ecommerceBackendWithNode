@@ -1,4 +1,5 @@
 const Item = require('../models/Item');
+const handleError = require('../utils/errorHandler');  // Import the global error handler
 
 exports.createItem = async (req, res) => {
     try {
@@ -10,41 +11,58 @@ exports.createItem = async (req, res) => {
             message: "Item Created Successfully."
         });
     } catch (error) {
-        if (error.name === "ValidationError") {
-            // Extract validation error details
-            const errors = Object.keys(error.errors).map(field => ({
-                field,
-                message: error.errors[field].message
-            }));
-
-            return res.status(400).send({
-                status: false,
-                message: "Validation error occurred.",
-                errors
-            });
-        }
-
-        res.status(500).send({
-            status: false,
-            message: "An error occurred while saving the item.",
-            error: error.message
-        });
+        handleError(res, error, "Error occurred while creating the item.");  // Use global error handler
     }
 };
 
 exports.getItems = async (req, res) => {
-    const items = await Item.find().populate('category');
-    res.json(items);
+    try {
+        const items = await Item.find().populate('category');
+        res.status(200).send({
+            status: true,
+            data: items,
+            message: "Items retrieved successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while retrieving items.");  // Use global error handler
+    }
 };
 
 exports.updateItem = async (req, res) => {
     const { id } = req.params;
-    const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true });
-    res.json(updatedItem);
+    try {
+        const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+        if (!updatedItem) {
+            return res.status(404).send({
+                status: false,
+                message: "Item not found."
+            });
+        }
+        res.status(200).send({
+            status: true,
+            data: updatedItem,
+            message: "Item updated successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while updating the item.");  // Use global error handler
+    }
 };
 
 exports.deleteItem = async (req, res) => {
     const { id } = req.params;
-    await Item.findByIdAndDelete(id);
-    res.status(204).send();
+    try {
+        const deletedItem = await Item.findByIdAndDelete(id);
+        if (!deletedItem) {
+            return res.status(404).send({
+                status: false,
+                message: "Item not found."
+            });
+        }
+        res.status(200).send({
+            status: true,
+            message: "Item deleted successfully."
+        });
+    } catch (error) {
+        handleError(res, error, "Error occurred while deleting the item.");  // Use global error handler
+    }
 };
