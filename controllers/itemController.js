@@ -3,7 +3,12 @@ const handleError = require('../utils/errorHandler');  // Import the global erro
 
 exports.createItem = async (req, res) => {
     try {
-        const item = new Item(req.body);
+        const item = new Item({
+            name: req.body.name,
+            category: req.body.category,
+            price: req.body.price,
+            image: req.body.image 
+        });
         await item.save();
         res.status(201).send({
             status: true,
@@ -11,7 +16,7 @@ exports.createItem = async (req, res) => {
             message: "Item Created Successfully."
         });
     } catch (error) {
-        handleError(res, error, "Error occurred while creating the item.");  // Use global error handler
+        handleError(res, error, "Error occurred while creating the item.");
     }
 };
 
@@ -44,7 +49,7 @@ exports.updateItem = async (req, res) => {
             message: "Item updated successfully."
         });
     } catch (error) {
-        handleError(res, error, "Error occurred while updating the item.");  // Use global error handler
+        handleError(res, error, "Error occurred while updating the item.");
     }
 };
 
