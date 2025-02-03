@@ -1,4 +1,5 @@
  1- npm init -y
  2- Install the required packages:
         npm install express mongoose jsonwebtoken bcryptjs cors body-parser nodemon
-3-
+3- Email Login
+4- forget password
