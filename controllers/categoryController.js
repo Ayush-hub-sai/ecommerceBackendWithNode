@@ -3,11 +3,14 @@ const handleError = require('../utils/errorHandler');  // Import the global erro
 
 exports.createCategory = async (req, res) => {
     try {
-        const category = new Category(req.body);
+        const category = new Category({
+            name: req.body.name,
+            image: req.body.image 
+        });
         await category.save();
         res.status(201).send({
             status: true,
-            data: category,
+            data: item,
             message: "Category Created Successfully."
         });
     } catch (error) {
