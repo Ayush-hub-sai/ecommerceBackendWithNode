@@ -3,8 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./config');
 const authRoutes = require('./routes/authRoutes');
-const itemRoutes = require('./routes/itemRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
+const itemRoutes = require('./routes/lookupRoutes/itemRoutes');
+const categoryRoutes = require('./routes/lookupRoutes/categoryRoutes');
+const stockRoutes = require('./routes/lookupRoutes/stockRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes'); 
 const dashboardRoutes = require('./routes/dashboardRoutes');
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/stock', stockRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 

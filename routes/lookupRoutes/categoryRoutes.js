@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCategory, getCategories, updateCategory, deleteCategory } = require('../controllers/categoryController');
+const { createCategory, getCategories, updateCategory, deleteCategory } = require('../../controllers/lookupController/categoryController');
 const router = express.Router();
 
 router.post('/', createCategory);

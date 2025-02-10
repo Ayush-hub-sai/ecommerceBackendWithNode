@@ -1,5 +1,5 @@
-const Item = require('../models/Item');
-const Category = require('../models/Category');
+const Item = require('../models/lookup/Item');
+const Category = require('../models/lookup/Category');
 const User = require('../models/User');
 
 exports.getDashboardData = async (req, res) => {

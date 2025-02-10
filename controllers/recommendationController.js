@@ -1,5 +1,5 @@
 const Recommendation = require('../models/Recommendation');
-const Item = require('../models/Item');
+const Item = require('../models/lookup/Item');
 
 // Create a recommendation
 exports.createRecommendation = async (req, res) => {

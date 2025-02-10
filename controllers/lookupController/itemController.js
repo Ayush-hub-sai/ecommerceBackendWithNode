@@ -1,19 +1,30 @@
-const Item = require('../models/Item');
-const handleError = require('../utils/errorHandler');  // Import the global error handler
+const Item = require('../../models/lookup/Item');
+const Stock = require('../../models/lookup/Stock');
+const handleError = require('../../utils/errorHandler');  // Import the global error handler
 
 exports.createItem = async (req, res) => {
     try {
+        // Create new item
         const item = new Item({
             name: req.body.name,
             category: req.body.category,
             price: req.body.price,
-            image: req.body.image 
+            image: req.body.image
         });
         await item.save();
+
+        // Create a stock entry for the new item with default quantity 0
+        const stock = new Stock({
+            item: item._id,
+            quantity: 0,          // Default stock is 0
+            isOutOfStock: true    // Mark as out of stock initially
+        });
+        await stock.save();
+
         res.status(201).send({
             status: true,
-            data: item,
-            message: "Item Created Successfully."
+            data: { item, stock },
+            message: "Item Created Successfully with default stock."
         });
     } catch (error) {
         handleError(res, error, "Error occurred while creating the item.");
