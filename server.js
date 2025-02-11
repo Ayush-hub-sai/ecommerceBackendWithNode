@@ -2,12 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./config');
-const authRoutes = require('./routes/authRoutes');
-const itemRoutes = require('./routes/lookupRoutes/itemRoutes');
-const categoryRoutes = require('./routes/lookupRoutes/categoryRoutes');
-const stockRoutes = require('./routes/lookupRoutes/stockRoutes');
-const recommendationRoutes = require('./routes/recommendationRoutes'); 
-const dashboardRoutes = require('./routes/dashboardRoutes');
+const authRoutes = require('./admin/routes/authRoutes');
+const itemRoutes = require('./admin/routes/lookupRoutes/itemRoutes');
+const categoryRoutes = require('./admin/routes/lookupRoutes/categoryRoutes');
+const stockRoutes = require('./admin/routes/lookupRoutes/stockRoutes');
+const recommendationRoutes = require('./admin/routes/recommendationRoutes'); 
+const dashboardRoutes = require('./admin/routes/dashboardRoutes');
 
 const app = express();
 connectDB();

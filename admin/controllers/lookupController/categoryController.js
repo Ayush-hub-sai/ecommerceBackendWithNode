@@ -1,5 +1,5 @@
-const Category = require('../../models/lookup/Category');
-const handleError = require('../../utils/errorHandler');  // Import the global error handler
+const Category = require('../../../admin/models/lookup/Category');
+const handleError = require('../../../utils/errorHandler');  // Import the global error handler
 
 exports.createCategory = async (req, res) => {
     try {

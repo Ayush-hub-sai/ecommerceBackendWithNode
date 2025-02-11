@@ -1,6 +1,6 @@
-const Item = require('../../models/lookup/Item');
-const Stock = require('../../models/lookup/Stock');
-const handleError = require('../../utils/errorHandler');  // Import the global error handler
+const Item = require('../../../admin/models/lookup/Item');
+const Stock = require('../../../admin/models/lookup/Stock');
+const handleError = require('../../../utils/errorHandler');  // Import the global error handler
 
 exports.createItem = async (req, res) => {
     try {
