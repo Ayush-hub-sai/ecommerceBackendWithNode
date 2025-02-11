@@ -14,7 +14,7 @@ exports.getAllStocks = async (req, res) => {
 
         res.status(200).json({
             status: true,
-            data: stocks,
+            data: stocks.filter(stockItem=>stockItem.item!=null), 
             message: "Stock items retrieved successfully."
         });
     } catch (error) {
