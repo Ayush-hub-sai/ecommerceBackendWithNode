@@ -1,26 +1,6 @@
 const Stock = require('../../models/lookup/Stock');
 const Item = require('../../models/lookup/Item');
 
-// ✅ Add Stock to an Item
-exports.addStock = async (req, res) => {
-    try {
-        const { itemId, quantity } = req.body;
-
-        let stock = await Stock.findOne({ item: itemId });
-
-        if (!stock) {
-            stock = new Stock({ item: itemId, quantity });
-        } else {
-            stock.quantity += quantity;
-        }
-
-        await stock.save();
-        res.status(200).json({ message: 'Stock added successfully', stock });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 exports.getAllStocks = async (req, res) => {
     try {
         const stocks = await Stock.find().populate('item');
@@ -42,7 +22,67 @@ exports.getAllStocks = async (req, res) => {
     }
 };
 
-// ✅ Reduce Stock When Item is Purchased
+exports.updateStock = async (req, res) => {
+    try {
+        const { itemId, quantity } = req.body;
+
+        if (quantity < 0) {
+            return res.status(400).json({ message: 'Quantity cannot be negative' });
+        }
+
+        const stock = await Stock.findOne({ item: itemId });
+
+        if (!stock) {
+            return res.status(404).json({ message: 'Stock record not found' });
+        }
+
+        stock.quantity = quantity;
+        stock.isOutOfStock = quantity === 0; 
+
+        await stock.save();
+
+        res.status(200).json({ message: 'Stock updated successfully', stock });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.setOutOfStock = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const stock = await Stock.findOneAndUpdate(
+            { item: itemId },
+            { isOutOfStock: true, quantity: 0 },
+            { new: true }
+        );
+
+        if (!stock) return res.status(404).json({ message: 'Stock record not found' });
+
+        res.status(200).json({ message: 'Item marked as out of stock', stock });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.addStock = async (req, res) => {
+    try {
+        const { itemId, quantity } = req.body;
+
+        let stock = await Stock.findOne({ item: itemId });
+
+        if (!stock) {
+            stock = new Stock({ item: itemId, quantity });
+        } else {
+            stock.quantity += quantity;
+        }
+
+        await stock.save();
+        res.status(200).json({ message: 'Stock added successfully', stock });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.reduceStock = async (req, res) => {
     try {
         const { itemId, quantity } = req.body;
@@ -66,25 +106,6 @@ exports.reduceStock = async (req, res) => {
     }
 };
 
-// ✅ Manually Set Item as Out of Stock
-exports.setOutOfStock = async (req, res) => {
-    try {
-        const { itemId } = req.body;
-        const stock = await Stock.findOneAndUpdate(
-            { item: itemId },
-            { isOutOfStock: true, quantity: 0 },
-            { new: true }
-        );
-
-        if (!stock) return res.status(404).json({ message: 'Stock record not found' });
-
-        res.status(200).json({ message: 'Item marked as out of stock', stock });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// ✅ Get Stock Status of an Item
 exports.getStockStatus = async (req, res) => {
     try {
         const { itemId } = req.params;
@@ -116,3 +137,4 @@ exports.deleteStock = async (req, res) => {
         handleError(res, error, "Error occurred while deleting the item.");  // Use global error handler
     }
 };
+
